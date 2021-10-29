@@ -14,4 +14,9 @@ class ProductController extends Controller
             Product::all()
         );
     }
+
+    public function show(Product $product)
+    {
+        return new ProductResource($product);
+    }
 }

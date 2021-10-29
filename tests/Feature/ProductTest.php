@@ -27,4 +27,20 @@ class ProductTest extends TestCase
                     });
             });
     }
+
+    public function test_singolo_prodotto()
+    {
+        $product = Product::factory()->create(['name' => 'nike'])->first();
+
+        $this->getJson('/api/products/' . $product->slug)
+            ->assertStatus(200)
+            ->assertJson(function($json) {
+                $json
+                    ->has('data', function($json) {
+                        $json
+                            ->where('name', 'nike')
+                            ->etc();
+                    });
+            });
+    }
 }
