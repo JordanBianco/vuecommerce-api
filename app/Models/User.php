@@ -12,6 +12,15 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::created(function($user) {
+            $user->cart()->create();
+        });
+    } 
+
     /**
      * The attributes that are mass assignable.
      *
@@ -41,4 +50,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
+    }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_user')->withTimestamps();
+    }
 }

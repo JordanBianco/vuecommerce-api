@@ -4,14 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
-use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     public function index()
     {
+        $search = request('search');
+
         return ProductResource::collection(
-            Product::all()
+            Product::search($search)->get()
         );
     }
 

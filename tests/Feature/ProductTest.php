@@ -43,4 +43,29 @@ class ProductTest extends TestCase
                     });
             });
     }
+
+    public function test_un_utente_puo_cercare_un_articolo()
+    {
+        Product::factory()->create([
+            'name' => 'nike',
+            'description' => 'nike desc'
+        ]);
+
+        Product::factory()->create([
+            'name' => 'adidas',
+            'description' => 'adidas desc'
+        ]);
+
+        $this->getJson('/api/products?search=nike')
+            ->assertStatus(200)
+            ->assertJson(function($json) {
+                $json
+                    ->has('data', 1)
+                    ->has('data.0', function($json) {
+                        $json
+                            ->where('name', 'nike')
+                            ->etc();
+                    });
+            });
+    }
 }

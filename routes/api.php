@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SavedProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +22,31 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Categories
+Route::prefix('categories')->group(function () {
+    Route::get('/', [CategoryController::class, 'index']);
+    // Route::get('/{product:slug}', [ProductController::class, 'show']);    
+});
+
+// Cart
+Route::prefix('cart')->group(function () {
+    Route::get('/', [CartController::class, 'index']);
+    Route::post('/', [CartController::class, 'store']);
+    Route::patch('/{product:id}/increment', [CartController::class, 'increment']);
+    Route::patch('/{product:id}/decrement', [CartController::class, 'decrement']);
+    Route::delete('/{product:id}', [CartController::class, 'destroy']);
+    Route::delete('/', [CartController::class, 'destroyAll']);
+});
+
+// Saved Items
+Route::prefix('saved')->group(function () {
+    Route::get('/', [SavedProductController::class, 'index']);
+    Route::post('/{product:id}', [SavedProductController::class, 'store']);
+    Route::delete('/{product:id}', [SavedProductController::class, 'destroy']);
+    Route::delete('/', [SavedProductController::class, 'destroyAll']);
+});
+
+// Products
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductController::class, 'index']);
     Route::get('/{product:slug}', [ProductController::class, 'show']);    
