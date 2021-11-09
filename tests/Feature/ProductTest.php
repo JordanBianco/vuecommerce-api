@@ -20,6 +20,8 @@ class ProductTest extends TestCase
             ->assertJson(function($json) {
                 $json
                     ->has('data')
+                    ->has('links')
+                    ->has('meta')
                     ->has('data.0', function($json) {
                         $json
                             ->where('name', 'nike')
@@ -61,6 +63,8 @@ class ProductTest extends TestCase
             ->assertJson(function($json) {
                 $json
                     ->has('data', 1)
+                    ->has('links')
+                    ->has('meta')
                     ->has('data.0', function($json) {
                         $json
                             ->where('name', 'nike')

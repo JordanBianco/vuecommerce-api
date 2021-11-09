@@ -11,13 +11,21 @@ class CategoryTest extends TestCase
     use RefreshDatabase;
 
     public function test_lista_di_categorie_nella_homepage()
-    {
-        $this->withoutExceptionHandling();
-        
+    {        
         Category::factory(4)->create();
 
         $this->getJson('/api/categories')->assertJson(function($json) {
             $json->has('data', 4);
+        });
+    }
+
+    public function test_lista_di_prodotti_della_categoria_selezionata()
+    {
+        $category = Category::factory()->create()->first();
+
+        $this->getJson('/api/categories/' . $category->slug . '/products')
+            ->assertJson(function($json) {
+                $json->has('data');
         });
     }
 }

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,9 +18,17 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class);
         $this->call(ProductSeeder::class);
         $this->call(CategorySeeder::class);
+        $this->call(ReviewSeeder::class);
 
-        Category::all()->each(function($category) {
-            $category->products()->attach([rand(1, 7), rand(8, 15), rand(16, 20)]);
+        Product::each(function($product) {
+            $product
+                ->categories()
+                ->attach([
+                    Category::all()->random()->id,
+                    Category::all()->random()->id,
+                    Category::all()->random()->id,
+                ]);
+                // Dovrebbero essere unici! FIX
         });
     }
 }

@@ -14,14 +14,16 @@ class ProductFactory extends Factory
      */
     public function definition()
     {
-        $name = $this->faker->company();
+        $name = $this->faker->sentence(3);
         $slug = Str::slug($name);
 
         return [
             'name' => $name,
             'slug' => $slug,
             'description' => $this->faker->paragraph(3),
-            'price' => random_int(9, 120),
+            'height' => random_int(50, 120),
+            'weight' => random_int(200, 50000),
+            'price' => random_int(200, 4000),
             'image_path' => 'https://i.pickadummy.com/600x400'
         ];
     }

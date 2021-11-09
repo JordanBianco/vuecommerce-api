@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SavedProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,10 +24,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Products
+Route::prefix('products')->group(function () {
+    Route::get('/', [ProductController::class, 'index']);
+    Route::get('/{product:slug}', [ProductController::class, 'show']);    
+    Route::get('/{product:slug}/similar', [ProductController::class, 'similar']);    
+    Route::get('/{product:slug}/reviews', [ReviewController::class, 'index']);    
+});
+
 // Categories
 Route::prefix('categories')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
-    // Route::get('/{product:slug}', [ProductController::class, 'show']);    
+    Route::get('/{category:slug}/products', [CategoryController::class, 'show']);
 });
 
 // Cart
@@ -46,8 +56,5 @@ Route::prefix('saved')->group(function () {
     Route::delete('/', [SavedProductController::class, 'destroyAll']);
 });
 
-// Products
-Route::prefix('products')->group(function () {
-    Route::get('/', [ProductController::class, 'index']);
-    Route::get('/{product:slug}', [ProductController::class, 'show']);    
-});
+// Orders -> testare
+Route::post('/order', [OrderController::class, 'store']);

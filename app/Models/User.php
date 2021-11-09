@@ -27,8 +27,14 @@ class User extends Authenticatable
      * @var string[]
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
+        'address',
+        'city',
+        'province',
+        'country',
+        'phone',
         'password',
     ];
 
@@ -60,4 +66,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Product::class, 'product_user')->withTimestamps();
     }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
 }

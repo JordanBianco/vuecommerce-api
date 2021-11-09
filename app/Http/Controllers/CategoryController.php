@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\ProductResource;
 use App\Models\Category;
-use Illuminate\Http\Request;
+use App\Models\Product;
 
 class CategoryController extends Controller
 {
@@ -12,6 +13,19 @@ class CategoryController extends Controller
     {
         return CategoryResource::collection(
             Category::all()
+        );
+    }
+
+    public function show(Category $category)
+    {
+        $min = request('min_price');
+        $max = request('max_price');
+    
+        return ProductResource::collection(
+            Product::withCategory($category)
+                ->withMinPrice($min)
+                ->withMaxPrice($max)
+                ->paginate(10)
         );
     }
 }
