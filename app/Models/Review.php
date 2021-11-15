@@ -9,6 +9,13 @@ class Review extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'product_id',
+        'title',
+        'content',
+        'rating',
+    ];
+
     public function scopeWithSort($query, $sort)
     {
         return $query->when($sort, function($query) use($sort) {
@@ -34,4 +41,8 @@ class Review extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

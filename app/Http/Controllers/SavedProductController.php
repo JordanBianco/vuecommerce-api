@@ -11,15 +11,14 @@ class SavedProductController extends Controller
 {
     public function index()
     {
-        $user = User::first();
         return SavedProductResource::collection(
-            $user->products
+            auth()->user()->products
         );
     }
 
     public function store(Product $product)
     {
-        $user = User::first();
+        $user = auth()->user();
 
         $itemInCart = $user->products()->where('product_id', $product->id)->first();
 
@@ -32,13 +31,11 @@ class SavedProductController extends Controller
 
     public function destroy(Product $product)
     {
-        $user = User::first();
-        $user->products()->detach($product->id);
+        auth()->user()->products()->detach($product->id);
     }
 
     public function destroyAll()
     {
-        $user = User::first();
-        $user->products()->detach();
+        auth()->user()->products()->detach();
     }
 }

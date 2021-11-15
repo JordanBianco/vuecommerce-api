@@ -8,6 +8,30 @@ use App\Models\Order;
 
 class OrderController extends Controller
 {
+    public function index()
+    {
+        $sort = request('sort', 'created_at.desc');
+
+        return OrderResource::collection(
+            Order::where('user_id', auth()->id())
+                ->whereNull('archived_at')
+                ->withSort($sort)
+                ->get()
+        );
+    }
+
+    public function archivedIndex()
+    {
+        $sort = request('sort', 'created_at.desc');
+
+        return OrderResource::collection(
+            Order::where('user_id', auth()->id())
+                ->whereNotNull('archived_at')
+                ->withSort($sort)
+                ->get()
+        );
+    }
+    
     public function store(OrderRequest $request)
     {
         $validated = $request->validated();
@@ -40,9 +64,36 @@ class OrderController extends Controller
             );
         }
 
-        return response()->json([
-            'message' => 'success',
+        return $this->success([
             'order' => new OrderResource($order)
         ]);
+    }
+
+    public function productsReviewed()
+    {
+        return auth()->user()->reviews->pluck('product_id');
+    }
+
+    public function purchasedProducts()
+    {
+        return auth()->user()->orders->load('products');
+    }
+
+    public function archive(Order $order)
+    {
+        $order->update([
+            'archived_at' => now()
+        ]);
+
+        return $this->success([], 200);
+    }
+
+    public function restore(Order $order)
+    {
+        $order->update([
+            'archived_at' => null
+        ]);
+
+        return $this->success([], 200);
     }
 }

@@ -15,6 +15,7 @@ class OrderResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'order_number' => $this->order_number,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
@@ -28,7 +29,10 @@ class OrderResource extends JsonResource
             'notes' => $this->notes,
             'total' => $this->total,
             'created_at' => $this->created_at,
-            'products' => $this->products
+            'products' => $this->products,
+            'quantity' => $this->whenPivotLoaded('product_order', function() {
+                return $this->pivot->quantity;
+            })
         ];
     }
 }

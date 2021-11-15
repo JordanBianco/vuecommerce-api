@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Coupon;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
 
@@ -16,15 +17,15 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(UserSeeder::class);
-        $this->call(ProductSeeder::class);
         $this->call(CategorySeeder::class);
-        $this->call(ReviewSeeder::class);
+        $this->call(ProductSeeder::class);
+
+        Coupon::factory()->create();
 
         Product::each(function($product) {
             $product
                 ->categories()
                 ->attach([
-                    Category::all()->random()->id,
                     Category::all()->random()->id,
                     Category::all()->random()->id,
                 ]);

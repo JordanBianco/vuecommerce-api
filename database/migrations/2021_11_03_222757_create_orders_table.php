@@ -28,6 +28,7 @@ class CreateOrdersTable extends Migration
             $table->string('zipcode');
             $table->string('phone');
             $table->text('notes')->nullable();
+            $table->timestamp('archived_at')->nullable();
             $table->timestamps();
         });
     }

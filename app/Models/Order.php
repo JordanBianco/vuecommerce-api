@@ -27,7 +27,22 @@ class Order extends Model
         'zipcode',
         'phone',
         'notes',
+        'archived_at',
     ];
+
+    public function scopeWithSort($query, $sort)
+    {
+        $query->when($sort, function($query) use($sort) {
+            switch ($sort) {
+                case 'created_at.desc':
+                    $query->orderBy('created_at', 'desc');
+                    break;
+                case 'created_at.asc':
+                    $query->orderBy('created_at', 'asc');
+                    break;
+            }
+        });
+    }
 
     public function user()
     {
@@ -36,6 +51,8 @@ class Order extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'product_order')->withTimestamps();
+        return $this->belongsToMany(Product::class, 'product_order')
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 }

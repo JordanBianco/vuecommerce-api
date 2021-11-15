@@ -30,10 +30,11 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'email',
-        'address',
+        'country',
         'city',
         'province',
-        'country',
+        'address',
+        'zipcode',
         'phone',
         'password',
     ];
@@ -72,4 +73,8 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }

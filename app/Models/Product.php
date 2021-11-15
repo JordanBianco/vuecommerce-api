@@ -10,8 +10,6 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $hidden = ['pivot'];
-
     protected $fillable = [
         'name',
         'slug',
@@ -139,7 +137,9 @@ class Product extends Model
 
     public function orders()
     {
-        return $this->belongsToMany(Order::class, 'product_order')->withTimestamps();
+        return $this->belongsToMany(Order::class, 'product_order')
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 
     public function reviews()
