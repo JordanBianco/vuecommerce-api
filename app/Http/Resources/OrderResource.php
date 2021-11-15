@@ -29,6 +29,7 @@ class OrderResource extends JsonResource
             'notes' => $this->notes,
             'total' => $this->total,
             'created_at' => $this->created_at,
+            'archived_at' => $this->archived_at,
             'products' => $this->products,
             'quantity' => $this->whenPivotLoaded('product_order', function() {
                 return $this->pivot->quantity;
