@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateUserAddressRequest;
+use App\Http\Requests\UpdateUserInfoRequest;
 use App\Http\Resources\ReviewResource;
 use App\Models\Review;
 use Illuminate\Http\Request;
@@ -13,14 +15,8 @@ class UserController extends Controller
         return $request->user()->loadCount('orders');
     }
 
-    public function updateInfo(Request $request)
+    public function updateInfo(UpdateUserInfoRequest $request)
     {
-        $request->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => 'required|email|unique:users,email,' . auth()->id(),
-        ]);
-
         auth()->user()->update([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -30,17 +26,8 @@ class UserController extends Controller
         return $this->success();
     }
 
-    public function updateAddress(Request $request)
+    public function updateAddress(UpdateUserAddressRequest $request)
     {
-        $request->validate([
-            'country' => 'required',
-            'city' => 'required',
-            'province' => 'required',
-            'address' => 'required',
-            'zipcode' => 'required|regex:/^[0-9]{3,7}$/',
-            'phone' => 'required|numeric'
-        ]);
-
         auth()->user()->update([
             'country' => $request->country,
             'city' => $request->city,

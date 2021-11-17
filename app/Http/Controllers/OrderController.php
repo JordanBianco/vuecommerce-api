@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderRequest;
 use App\Http\Resources\OrderResource;
+use App\Mail\newOrder;
 use App\Models\Order;
 use Illuminate\Support\Facades\Mail;
 
@@ -73,6 +74,8 @@ class OrderController extends Controller
                 ]
             );
         }
+
+        Mail::to($validated['email'])->send(new newOrder($order));
 
         return $this->success([
             'order' => new OrderResource($order)

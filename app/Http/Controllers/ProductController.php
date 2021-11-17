@@ -3,12 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
-use App\Http\Resources\ReviewResource;
-use App\Models\Category;
 use App\Models\Product;
-use App\Models\Review;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {

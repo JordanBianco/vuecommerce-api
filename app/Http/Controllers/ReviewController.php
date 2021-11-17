@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreReviewRequest;
 use App\Http\Resources\ReviewResource;
 use App\Models\Product;
 use App\Models\Review;
-use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
@@ -21,14 +21,8 @@ class ReviewController extends Controller
         );
     }
 
-    public function store(Product $product, Request $request)
+    public function store(Product $product, StoreReviewRequest $request)
     {
-        $request->validate([
-            'title' => 'sometimes|nullable|max:50',
-            'content' => 'sometimes|nullable|max:500',
-            'rating' => 'required|numeric|min:1|max:5',
-        ]);
-
         auth()->user()->reviews()->create([
             'product_id' => $product->id,
             'title' => $request->title,
