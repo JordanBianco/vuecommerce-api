@@ -4,15 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateUserAddressRequest;
 use App\Http\Requests\UpdateUserInfoRequest;
-use App\Http\Resources\ReviewResource;
-use App\Models\Review;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     public function index(Request $request)
     {
-        return $request->user()->loadCount('orders');
+        return $request->user()->loadCount('orders', 'reviews');
     }
 
     public function updateInfo(UpdateUserInfoRequest $request)
@@ -38,17 +36,5 @@ class UserController extends Controller
         ]);
 
         return $this->success();
-    }
-
-    public function reviews()
-    {
-        $sort = request('sort', 'created_at.desc');
-
-        return ReviewResource::collection(
-            Review::where('user_id', auth()->id())
-                ->withSort($sort)
-                ->with(['product', 'user:id,first_name,last_name'])
-                ->get()
-        );
     }
 }

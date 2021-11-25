@@ -25,7 +25,10 @@ class CategoryTest extends TestCase
 
         $this->getJson('/api/categories/' . $category->slug . '/products')
             ->assertJson(function($json) {
-                $json->has('data');
-        });
+                $json
+                    ->has('data')
+                    ->has('links')
+                    ->has('meta');
+            });
     }
 }

@@ -9,5 +9,5 @@ Route::prefix('products')->group(function () {
     Route::get('/', [ProductController::class, 'index']);
     Route::get('/{product:slug}', [ProductController::class, 'show']);    
     Route::get('/{product:slug}/similar', [ProductController::class, 'similar']);    
-    Route::get('/{product:slug}/reviews', [ReviewController::class, 'index']);    
+    Route::get('/{product:slug}/reviews', [ProductController::class, 'reviews']);
 });

@@ -12,37 +12,38 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $sort = request('sort', 'created_at.desc');
+        $search = request('search', '');
+        $fstatus = request('fstatus', '');
+        $sort = request('sort', 'created_at');
+        $dir = request('dir', 'desc');
 
         return OrderResource::collection(
             Order::where('user_id', auth()->id())
                 ->whereNull('archived_at')
-                ->withSort($sort)
+                ->withSearch($search)
+                ->withFilterStatus($fstatus)
+                ->orderBy($sort, $dir)
                 ->get()
         );
     }
 
     public function archivedIndex()
     {
-        $sort = request('sort', 'created_at.desc');
+        $search = request('search', '');
+        $fstatus = request('fstatus', '');
+        $sort = request('sort', 'created_at');
+        $dir = request('dir', 'desc');
 
         return OrderResource::collection(
             Order::where('user_id', auth()->id())
                 ->whereNotNull('archived_at')
-                ->withSort($sort)
+                ->withSearch($search)
+                ->withFilterStatus($fstatus)
+                ->orderBy($sort, $dir)
                 ->get()
         );
     }
     
-    public function show($slug)
-    {
-        $order = Order::where('order_number', $slug)->first();
-
-        abort_if(!auth()->user()->orders->contains($order), 403);
-        
-        return new OrderResource($order);
-    }
-
     public function store(OrderRequest $request)
     {
         $validated = $request->validated();
@@ -108,5 +109,14 @@ class OrderController extends Controller
         ]);
 
         return $this->success([], 200);
+    }
+
+    public function last()
+    {
+        return new OrderResource(
+            Order::where('user_id', auth()->id())
+                ->orderBy('created_at', 'desc')
+                ->first()
+        );
     }
 }

@@ -25,6 +25,7 @@ class Order extends Model
         'province',
         'address',
         'zipcode',
+        'status',
         'phone',
         'notes',
         'archived_at',
@@ -41,6 +42,20 @@ class Order extends Model
                     $query->orderBy('created_at', 'asc');
                     break;
             }
+        });
+    }
+
+    public function scopeWithFilterStatus($query, $fstatus)
+    {
+        return $query->when($fstatus, function($query) use($fstatus) {
+            $query->where('status', $fstatus);
+        });
+    }
+
+    public function scopeWithSearch($query, $search)
+    {
+        return $query->when($search, function($query) use($search) {
+            $query->where('order_number', 'LIKE', '%' . $search . '%');
         });
     }
 

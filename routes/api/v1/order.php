@@ -9,7 +9,8 @@ Route::prefix('orders')->group(function () {
     Route::get('/archived', [OrderController::class, 'archivedIndex']);
     Route::get('/products-reviewed', [OrderController::class, 'productsReviewed']);
     Route::get('/purchased-products', [OrderController::class, 'purchasedProducts']);
-    Route::get('/{slug}', [OrderController::class, 'show']);
+    Route::get('/last', [OrderController::class, 'last']);
+
 
     Route::post('/', [OrderController::class, 'store']);
 

@@ -16,6 +16,15 @@ class Review extends Model
         'rating',
     ];
 
+    public function scopeWithSearch($query, $search)
+    {
+        return $query->when($search, function($query) use($search) {
+            $query->whereHas('product', function($query) use($search) {
+                $query->where('name', 'LIKE', '%' . $search . '%');
+            });
+        });
+    }
+
     public function scopeWithSort($query, $sort)
     {
         return $query->when($sort, function($query) use($sort) {

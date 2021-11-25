@@ -3,20 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreReviewRequest;
+use App\Http\Requests\UpdateReviewRequest;
 use App\Http\Resources\ReviewResource;
 use App\Models\Product;
 use App\Models\Review;
 
 class ReviewController extends Controller
 {
-    public function index(Product $product)
+    public function index()
     {
-        $sort = request('sort', 'created_at.desc');
+        $search = request('search', '');
+        $sort = request('sort', 'created_at');
+        $dir = request('dir', 'desc');
 
         return ReviewResource::collection(
-            Review::where('product_id', $product->id)
-                ->withSort($sort)
-                ->with('user:id,first_name,last_name')
+            Review::where('user_id', auth()->id())
+                ->withSearch($search)
+                ->orderBy($sort, $dir)
+                ->with(['product', 'user:id,first_name,last_name'])
                 ->get()
         );
     }
@@ -31,5 +35,37 @@ class ReviewController extends Controller
         ]);
 
         return $this->success([], 201);
+    }
+
+    public function update(Review $review, UpdateReviewRequest $request)
+    {
+        abort_if(!auth()->user()->reviews->contains($review), 403);
+
+        $review->update([
+            'title' => $request->title,
+            'content' => $request->content,
+            'rating' => $request->rating,
+        ]);
+
+        return $this->success();
+    }
+
+    public function last()
+    {   
+        return new ReviewResource(
+            Review::where('user_id', auth()->id())
+                ->orderBy('created_at', 'desc')
+                ->with('product')
+                ->first()
+        );
+    }
+
+    public function destroy(Review $review)
+    {
+        abort_if(!auth()->user()->reviews->contains($review), 403);
+
+        $review->delete();
+
+        return $this->success();
     }
 }

@@ -16,7 +16,7 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('order_number');
+            $table->string('order_number')->unique();
             $table->unsignedBigInteger('total');
             $table->string('first_name');
             $table->string('last_name');
@@ -28,6 +28,7 @@ class CreateOrdersTable extends Migration
             $table->string('zipcode');
             $table->string('phone');
             $table->text('notes')->nullable();
+            $table->enum('status', ['pending', 'in transit', 'complete' ,'canceled']);
             $table->timestamp('archived_at')->nullable();
             $table->timestamps();
         });

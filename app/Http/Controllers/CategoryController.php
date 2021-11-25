@@ -20,11 +20,14 @@ class CategoryController extends Controller
     {
         $min = request('min_price');
         $max = request('max_price');
+        $ratings = request('ratings');
     
         return ProductResource::collection(
             Product::withCategory($category)
+                ->withRatings($ratings)
                 ->withMinPrice($min)
                 ->withMaxPrice($max)
+                ->with('reviews')
                 ->paginate(10)
         );
     }

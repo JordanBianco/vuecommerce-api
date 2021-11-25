@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\ReviewResource;
 use App\Models\Product;
+use App\Models\Review;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -71,5 +73,17 @@ class ProductController extends Controller
                 ->get();
 
         return ProductResource::collection($products);
+    }
+
+    public function reviews(Product $product)
+    {
+        $sort = request('sort', 'created_at.desc');
+
+        return ReviewResource::collection(
+            Review::where('product_id', $product->id)
+                ->withSort($sort)
+                ->with('user:id,first_name,last_name')
+                ->get()
+        );
     }
 }
