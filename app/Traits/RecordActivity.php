@@ -28,7 +28,6 @@ trait RecordActivity
 
     public function recordActivity($event, $model)
     {
-        // Quando seed il DB
         if (auth()->check()) {
             Activity::create([
                 'user_id' => auth()->id(),

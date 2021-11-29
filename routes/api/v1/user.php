@@ -9,4 +9,5 @@ Route::prefix('user')->group(function () {
     Route::get('/activities', [UserController::class, 'activities']);
     Route::patch('/personal-info', [UserController::class, 'updateInfo']);
     Route::patch('/address', [UserController::class, 'updateAddress']);
+    Route::delete('/delete', [UserController::class, 'destroy']);
 });

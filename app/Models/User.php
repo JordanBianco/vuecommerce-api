@@ -20,6 +20,10 @@ class User extends Authenticatable
         static::created(function($user) {
             $user->cart()->create();
         });
+
+        static::deleted(function($user) {
+            $user->activities()->delete();
+        });
     } 
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Activity;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -43,5 +44,35 @@ class UserTest extends TestCase
 
         $this->assertEquals('updated', $user->fresh()->address);
         $this->assertEquals('updated', $user->fresh()->city);
+    }
+
+    public function test_utente_può_cancellare_il_suo_account()
+    {
+        $user = User::factory()->create()->first();
+        $this->actingAs($user);
+
+        $this->deleteJson('/api/user/delete')->assertStatus(200);
+
+        $this->assertDatabaseMissing('users', $user->only('id'));
+    }
+
+    public function test_se_utente_cancella_il_suo_account_la_sua_attività_viene_cancellata()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create()->first();
+        $this->actingAs($user);
+
+        $this->patchJson('/api/password/change', [
+            'oldPassword' => 'password',
+            'newPassword_confirmation' => 'password10@',
+            'newPassword' => 'password10@',
+        ]);
+
+        $this->assertEquals(1, $user->fresh()->activities->count());
+
+        $this->deleteJson('/api/user/delete')->assertStatus(200);
+
+        $this->assertEquals(0, $user->activities->count());
     }
 }

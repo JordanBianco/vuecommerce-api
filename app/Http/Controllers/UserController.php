@@ -17,13 +17,11 @@ class UserController extends Controller
 
     public function activities()
     {
-        $limit = request('limit', 10);
-
         return ActivityResource::collection(
             Activity::where('user_id', auth()->id())
                 ->with('subject')
                 ->orderBy('created_at', 'desc')
-                ->limit($limit)
+                ->limit(20)
                 ->get()
         );
     }
@@ -49,6 +47,13 @@ class UserController extends Controller
             'zipcode' => $request->zipcode,
             'phone' => $request->phone,
         ]);
+
+        return $this->success();
+    }
+
+    public function destroy()
+    {
+        auth()->user()->delete();
 
         return $this->success();
     }
