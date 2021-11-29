@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateUserAddressRequest;
 use App\Http\Requests\UpdateUserInfoRequest;
+use App\Http\Resources\ActivityResource;
+use App\Models\Activity;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -11,6 +13,19 @@ class UserController extends Controller
     public function index(Request $request)
     {
         return $request->user()->loadCount('orders', 'reviews');
+    }
+
+    public function activities()
+    {
+        $limit = request('limit', 10);
+
+        return ActivityResource::collection(
+            Activity::where('user_id', auth()->id())
+                ->with('subject')
+                ->orderBy('created_at', 'desc')
+                ->limit($limit)
+                ->get()
+        );
     }
 
     public function updateInfo(UpdateUserInfoRequest $request)

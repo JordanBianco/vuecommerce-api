@@ -2,19 +2,21 @@
 
 namespace App\Models;
 
+use App\Traits\RecordActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model
 {
-    use HasFactory;
+    use HasFactory, RecordActivity;
 
     protected $fillable = [
         'product_id',
-        'title',
         'content',
         'rating',
     ];
+
+    protected $with = ['product'];
 
     public function scopeWithSearch($query, $search)
     {

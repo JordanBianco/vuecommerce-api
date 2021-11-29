@@ -18,7 +18,6 @@ class ReviewFactory extends Factory
         return [
             'user_id' => User::all()->random()->id,
             'product_id' => Product::all()->random()->id,
-            'title' => $this->faker->sentence(),  
             'content' => $this->faker->paragraph(),  
             'rating' => random_int(1, 5),
         ];

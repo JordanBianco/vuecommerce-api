@@ -16,6 +16,7 @@ class OrderController extends Controller
         $fstatus = request('fstatus', '');
         $sort = request('sort', 'created_at');
         $dir = request('dir', 'desc');
+        $perPage = request('perPage', 5);
 
         return OrderResource::collection(
             Order::where('user_id', auth()->id())
@@ -23,7 +24,7 @@ class OrderController extends Controller
                 ->withSearch($search)
                 ->withFilterStatus($fstatus)
                 ->orderBy($sort, $dir)
-                ->get()
+                ->paginate($perPage)
         );
     }
 
@@ -33,6 +34,7 @@ class OrderController extends Controller
         $fstatus = request('fstatus', '');
         $sort = request('sort', 'created_at');
         $dir = request('dir', 'desc');
+        $perPage = request('perPage', 5);
 
         return OrderResource::collection(
             Order::where('user_id', auth()->id())
@@ -40,34 +42,29 @@ class OrderController extends Controller
                 ->withSearch($search)
                 ->withFilterStatus($fstatus)
                 ->orderBy($sort, $dir)
-                ->get()
+                ->paginate($perPage)
         );
     }
     
     public function store(OrderRequest $request)
     {
-        $validated = $request->validated();
-
-        $order = new Order();
-
-        $order->order_number = uniqid('order_', true);
-        $order->user_id = $validated['user_id'];
-        $order->first_name = $validated['first_name'];
-        $order->last_name = $validated['last_name'];
-        $order->email = $validated['email'];
-        $order->country = $validated['country'];
-        $order->city = $validated['city'];
-        $order->province = $validated['province'];
-        $order->address = $validated['address'];
-        $order->zipcode = $validated['zipcode'];
-        $order->phone = $validated['phone'];
-        $order->notes = $validated['notes'];
-        $order->total = $validated['total'];
-        
-        $order->save();
+        $order = auth()->user()->orders()->create([
+            'order_number' => uniqid('order_', true),
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'country' => $request->country,
+            'city' => $request->city,
+            'province' => $request->province,
+            'address' => $request->address,
+            'zipcode' => $request->zipcode,
+            'phone' => $request->phone,
+            'notes' => $request->notes,
+            'total' => $request->total,
+        ]);
 
         foreach ($request->items as $item) {
-            $order->products()->attach(
+            $order->products()-> attach(
                 $order->id,
                 [
                     'product_id' => $item['product']['id'],
@@ -76,7 +73,7 @@ class OrderController extends Controller
             );
         }
 
-        Mail::to($validated['email'])->send(new newOrder($order));
+        Mail::to($request->email)->send(new newOrder($order));
 
         return $this->success([
             'order' => new OrderResource($order)
@@ -113,10 +110,9 @@ class OrderController extends Controller
 
     public function last()
     {
-        return new OrderResource(
-            Order::where('user_id', auth()->id())
-                ->orderBy('created_at', 'desc')
-                ->first()
-        );
+        return Order::where('user_id', auth()->id())
+                    ->orderBy('created_at', 'desc')
+                    ->with('products')
+                    ->first();
     }
 }

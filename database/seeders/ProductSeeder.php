@@ -15,8 +15,6 @@ class ProductSeeder extends Seeder
      */
     public function run()
     {
-        Product::factory(30)
-            ->has(Review::factory(3), 'reviews')
-            ->create();
+        Product::factory(30)->create();
     }
 }

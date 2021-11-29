@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\RecordActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, RecordActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -15,6 +16,7 @@ class Order extends Model
      * @var string[]
      */
     protected $fillable = [
+        'order_number',
         'user_id',
         'total',
         'first_name',
@@ -25,7 +27,6 @@ class Order extends Model
         'province',
         'address',
         'zipcode',
-        'status',
         'phone',
         'notes',
         'archived_at',

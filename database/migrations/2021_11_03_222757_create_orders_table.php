@@ -28,7 +28,7 @@ class CreateOrdersTable extends Migration
             $table->string('zipcode');
             $table->string('phone');
             $table->text('notes')->nullable();
-            $table->enum('status', ['pending', 'in transit', 'complete' ,'canceled']);
+            $table->enum('status', ['pending', 'in transit', 'complete' ,'canceled'])->default('pending');
             $table->timestamp('archived_at')->nullable();
             $table->timestamps();
         });

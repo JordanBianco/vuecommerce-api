@@ -14,45 +14,98 @@ class OrderTest extends TestCase
 
     public function test_un_utente_puo_effettuare_un_ordine()
     {
-        $this->assertTrue(true);
-        // $this->withoutExceptionHandling();
+        $user = User::factory()->create()->first();
+        $this->actingAs($user);
+        
+        $this->placeOrder($user);
 
-        // $user = User::factory()->create()->first();
-        // $this->actingAs($user);
+        $this->assertEquals(1, $user->orders->count());
+        $this->assertDatabaseHas('orders', [
+            'user_id' => $user->id, 
+            'total' => $user->orders->first()->total,         
+        ]);
+    }
 
-        // $product = Product::factory()->create();
-        // $product2 = Product::factory()->create();
+    public function test_un_utente_puo_vedere_i_suoi_ordini()
+    {
+        $user = User::factory()->create()->first();
+        $this->actingAs($user);
+        
+        $this->placeOrder($user);
 
-        // $this->postJson('/api/cart', [
-        //     'product_id' => $product->id,
-        //     'quantity' => 1
-        // ]);
+        $this->getJson('/api/orders')->assertJson(function($json) {
+            $json
+                ->has('data')
+                ->has('links')
+                ->has('meta');
+        });
+    }
+    
+    public function test_un_utente_puo_archiviare_un_ordine()
+    {
+        $user = User::factory()->create()->first();
+        $this->actingAs($user);
+        
+        $this->placeOrder($user);
 
-        // $this->postJson('/api/cart', [
-        //     'product_id' => $product2->id,
-        //     'quantity' => 3
-        // ]);
+        $order = Order::first();
 
-        // $this->assertEquals(2, $user->cart->products->count());
+        $this->assertNull($order->archived_at);
 
-        // $this->postJson('/api/orders', [
-        //     'user_id' => $user->id,
-        //     'first_name' => $user->first_name,
-        //     'last_name' => $user->last_name,
-        //     'email' => $user->email,
-        //     'address' => $user->address,
-        //     'city' => $user->city,
-        //     'province' => $user->province,
-        //     'country' => $user->country,
-        //     'phone' => $user->phone,
-        //     'items' => $user->cart->products,
-        //     'total' => 100 // test
-        // ]);
+        $this->patchJson('/api/orders/' . $order->id . '/archive')->assertStatus(200);
 
-        // dd($user->orders);
+        $this->assertNotNull($order->fresh()->archived_at);
+    }
 
-        // $this->assertDatabaseHas('orders', [
-        //     'user_id' => $user->id,
-        // ]);
+    public function test_un_utente_puo_ripristinare_un_ordine_archiviato()
+    {
+        $user = User::factory()->create()->first();
+        $this->actingAs($user);
+        
+        $this->placeOrder($user);
+
+        $order = Order::first();
+
+        $this->patchJson('/api/orders/' . $order->id . '/archive')->assertStatus(200);
+        $this->assertNotNull($order->fresh()->archived_at);
+
+        $this->patchJson('/api/orders/' . $order->id . '/restore')->assertStatus(200);
+        $this->assertNull($order->fresh()->archived_at);
+    }
+
+    public function test_un_utente_puo_vedere_gli_ordini_che_ha_archiviato()
+    {
+        $user = User::factory()->create()->first();
+        $this->actingAs($user);
+        
+        $this->placeOrder($user);
+
+        $this->getJson('/api/orders/archived')->assertJson(function($json) {
+            $json
+                ->has('data')
+                ->has('links')
+                ->has('meta');
+        });
+    }
+
+    protected function placeOrder($user)
+    {
+        $this->postJson('/api/orders', [
+            'total' => 100,
+            'user_id' => $user->id,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'email' => $user->email,
+            'country' => $user->country,
+            'city' => $user->city,
+            'province' => $user->province,
+            'address' => $user->address,
+            'zipcode' => $user->zipcode,
+            'phone' => 333333,
+            'items' => [
+                'product' => Product::factory()->create(),
+                'quantity' => 1
+            ]
+        ]);
     }
 }

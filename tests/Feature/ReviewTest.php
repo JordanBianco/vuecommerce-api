@@ -15,7 +15,9 @@ class ReviewTest extends TestCase
 
     public function test_una_recensione_appartiene_ad_un_prodotto()
     {
-        User::factory()->create();
+        $user = User::factory()->create()->first();
+        $this->actingAs($user);
+        
         $product = Product::factory()->create();
         $review = Review::factory()->create(['product_id' => $product->id]);
 
@@ -37,18 +39,22 @@ class ReviewTest extends TestCase
         $product1 = Product::factory()->create();
         $product2 = Product::factory()->create();
         
-        $review1 = Review::factory()->create([
+        Review::factory()->create([
             'user_id' => auth()->id(),
             'product_id' => $product1->id
         ]);
-        $review2 = Review::factory()->create([
+        
+        Review::factory()->create([
             'user_id' => auth()->id(),
             'product_id' => $product2->id
         ]);
 
         $this->getJson('api/reviews')
             ->assertJson(function($json) {
-                $json->has('data', 2);
+                $json
+                    ->has('data', 2)
+                    ->has('meta')
+                    ->has('links');
             });
     }
 
@@ -60,7 +66,6 @@ class ReviewTest extends TestCase
         $product = Product::factory()->create();
 
         $this->postJson('api/' . $product->id . '/review', $review = [
-            'title' => 'test',
             'content' => 'test',
             'rating' => '4',
         ]);
@@ -77,16 +82,16 @@ class ReviewTest extends TestCase
 
         $review = Review::factory()->create([
             'user_id' => 1,
+            'content' => 'test',
             'product_id' => $product->id
         ]);
 
         $this->patchJson('api/reviews/' . $review->id, [
-            'title' => 'updated',
-            'content' => $review->content,
+            'content' => 'updated',
             'rating' => $review->rating,
         ]);
 
-        $this->assertEquals('updated', $review->fresh()->title);
+        $this->assertEquals('updated', $review->fresh()->content);
     }
 
     public function test_un_utente_non_puo_modificare_una_recensione_altrui()
