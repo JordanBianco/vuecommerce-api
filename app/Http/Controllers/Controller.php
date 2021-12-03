@@ -18,4 +18,11 @@ class Controller extends BaseController
             'data' => $data
         ], $status);
     }
+
+    public function error($status = 400)
+    {
+        return response()->json([
+            'message' => 'error',
+        ], $status);
+    }
 }

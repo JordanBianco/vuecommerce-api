@@ -3,10 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
-use App\Models\Coupon;
 use App\Models\Product;
 use App\Models\Review;
-use App\Models\User;
+use Database\Factories\Helper\FactoryHelper;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -19,26 +18,17 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(UserSeeder::class);
+        $this->call(CouponSeeder::class);
         $this->call(CategorySeeder::class);
         $this->call(ProductSeeder::class);
-        // $this->call(ReviewSeeder::class);
-
-        Coupon::factory()->create();
 
         Product::each(function($product) {
             $product
                 ->categories()
-                ->attach([
-                    Category::all()->random()->id,
-                    Category::all()->random()->id,
+                ->sync([
+                    FactoryHelper::getRandomModelId(Category::class),
+                    FactoryHelper::getRandomModelId(Category::class)
                 ]);
-                // Dovrebbero essere unici! FIX
-        });
-
-        Product::each(function($product) {
-            Review::factory(3)->create([
-                'product_id' => $product->id
-            ]);
         });
     }
 }

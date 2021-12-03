@@ -42,6 +42,7 @@ class User extends Authenticatable
         'zipcode',
         'phone',
         'password',
+        'last_login_at',
     ];
 
     /**
@@ -61,7 +62,30 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_admin' => 'boolean'
     ];
+
+    public function scopeWithSearch($query, $search)
+    {
+        return $query->when($search, function($query) use($search) {
+            $query
+                ->where('first_name', 'LIKE', '%' . $search . '%')
+                ->orWhere('last_name', 'LIKE', '%' . $search . '%')
+                ->orWhere('email', 'LIKE', '%' . $search . '%');
+        });
+    }
+
+    public function scopeWithEmailVerified($query, $email_verified)
+    {
+        return $query->when($email_verified, function($query) use($email_verified) {
+            switch ($email_verified) {
+                case 'true':
+                    return $query->whereNotNull('email_verified_at');
+                case 'false':
+                    return $query->whereNull('email_verified_at');
+            }
+        });
+    }
 
     public function cart()
     {

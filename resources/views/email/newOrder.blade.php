@@ -10,25 +10,12 @@ Ti manderemo una nuova email, non appena verrà spedito.
 ## Ordine numero {{ $order->order_number }}<br>
 {{ $order->created_at->format('d/m/Y') }}
 
-@component('mail::subcopy')
-@endcomponent
-
 @component('mail::table')
-<table>
+| Articolo      | Quantità      | Prezzo   |
+|:------------- |:-------------:| --------:|
 @foreach ($order->products as $product)
-<tr>
-<td>
-{{ $product->name }}
-</td>
-<td>
-x{{ $product->pivot->quantity }}
-</td>
-<td>
-€{{ $product->price }}
-</td>
-</tr>
+| {{ $product->name }} | {{ $product->pivot->quantity }} | €{{ $product->price }} |
 @endforeach
-</table>
 @endcomponent
 
 @component('mail::subcopy')
@@ -46,7 +33,7 @@ x{{ $product->pivot->quantity }}
 @endcomponent
 
 Per qualsiasi informazione, non esitare a contattarci,<br>
-mandaci un email a vueshop@gmail.com<br>
+manda un email a vueshop@gmail.com<br>
 Grazie
 
 @endcomponent

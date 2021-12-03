@@ -1,0 +1,13 @@
+ADMIN PANEL
+
+- charts -> dashboard
+- todos
+
+- products management
+- orders management
+- invoice management
+
+ordine cambio status -> cronologia attività utente
+
+- full calendar
+

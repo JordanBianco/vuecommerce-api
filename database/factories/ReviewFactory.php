@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Database\Factories\Helper\FactoryHelper;
 
 class ReviewFactory extends Factory
 {
@@ -16,8 +17,8 @@ class ReviewFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => User::all()->random()->id,
-            'product_id' => Product::all()->random()->id,
+            'user_id' => FactoryHelper::getRandomModelId(User::class),
+            'product_id' => FactoryHelper::getRandomModelId(Product::class),
             'content' => $this->faker->paragraph(),  
             'rating' => random_int(1, 5),
         ];

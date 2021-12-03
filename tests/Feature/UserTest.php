@@ -58,8 +58,6 @@ class UserTest extends TestCase
 
     public function test_se_utente_cancella_il_suo_account_la_sua_attività_viene_cancellata()
     {
-        $this->withoutExceptionHandling();
-
         $user = User::factory()->create()->first();
         $this->actingAs($user);
 

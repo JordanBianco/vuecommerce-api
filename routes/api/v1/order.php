@@ -11,7 +11,6 @@ Route::prefix('orders')->group(function () {
     Route::get('/purchased-products', [OrderController::class, 'purchasedProducts']);
     Route::get('/last', [OrderController::class, 'last']);
 
-
     Route::post('/', [OrderController::class, 'store']);
 
     Route::patch('/{order:id}/archive', [OrderController::class, 'archive']);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserLoginEvent;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
@@ -26,7 +27,13 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         if (Auth::attempt($request->only('email', 'password'))) {
-            return $this->success();
+
+            event(new UserLoginEvent(auth()->user()));
+
+            return $this->success([
+                'is_admin' => auth()->user()->is_admin
+            ]);
+
         }  else {
             throw ValidationException::withMessages([
                 'email' => ['Le credenziali inserite non sono corrette']
